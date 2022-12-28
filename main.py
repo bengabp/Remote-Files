@@ -71,7 +71,7 @@ async def get_all_files(request:Request):
         }
 
 
-@app.post("/upload-files")
+@app.post("/")
 async def upload_files(request:Request):
     file =  await request.form()
     file = file.get("file")
@@ -92,3 +92,22 @@ async def upload_files(request:Request):
                 'message':f'{filename} is not a file',
                 'messageCode':-1,
             }
+
+@app.delete("/{filename}")
+async def delete_file(request:Request,filename:str):
+    message = None
+    messageCode = -1
+
+    try:
+        os.remove(f"{FILES_UPLOAD_FOLDER}/{filename}")
+        message = "File deleted"
+        messageCode = 1
+
+    except FileNotFoundError:
+        message = "File not found"
+        messageCode = -1
+
+    return {
+        "message":message,
+        "messageCode":messageCode
+    }

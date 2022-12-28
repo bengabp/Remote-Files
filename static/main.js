@@ -25,7 +25,7 @@ $(document).ready(()=>{
             formdata.append("file",upload_file[0]);
 
             $.ajax({
-                url:"/upload-files",
+                url:"/",
                 type:"POST",
                 async:false,
                 cache:false,
@@ -66,8 +66,12 @@ $(document).ready(()=>{
                 `
                 
                 data.files.forEach(new_item =>{
-                    let new_element = 
-                    `<div class="item" id="item-${new_item.unique_hash}">
+                    let new_element = document.createElement("div");
+                    new_element.id = `item-${new_item.unique_hash}`;
+                    new_element.classList.add("item");
+
+                    new_element.innerHTML = 
+                    `
                         <div class="item-header">
                             <span>${new_item.filename}</span>
                             <span>${new_item.filesize}</span>
@@ -83,31 +87,32 @@ $(document).ready(()=>{
                         </div>
                         <div class="item-footer">
                             <!-- Download Icon -->
-                            <div class="menu-btn">
+                            <div class="menu-btn" data-id='download-btn'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-cloud-arrow-down-fill" viewBox="0 0 16 16">
                                     <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z"/>
                                 </svg>
                                 <span>Download</span>
                             </div>
-                            <div class="menu-btn">
+                            <div class="menu-btn" data-id='share-btn'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16">
                                     <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
                                 </svg>
                                 <span>Share</span>
                             </div>
                             
-                            <div class="menu-btn">
+                            <div class="menu-btn" data-id='delete-btn'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                 </svg>
                                 <span>Delete</span>
                             </div>
                         </div>
-                    </div>` 
-                    items_container.innerHTML += new_element
-                    
-                    let new_element_object = $("item-"+new_item.unique_hash);
-                    new_element_object.on("click",(evt)=>{console.log("clicked");alert("this is it")})
+                    ` 
+                    items_container.append(new_element)
+                    new_element.querySelector("[data-id='download-btn']").addEventListener('click',onclickItemButton)
+                    new_element.querySelector("[data-id='share-btn']").addEventListener('click',onclickItemButton)
+                    new_element.querySelector("[data-id='delete-btn']").addEventListener('click',onclickItemButton)
+
                 });
                 
             },
@@ -119,5 +124,36 @@ $(document).ready(()=>{
     // Get all files on server
     do_refresh();
 
+    function onclickItemButton(event){
+        let item =  event.currentTarget.parentElement.parentElement;
+        let filename = item.querySelector("span").textContent;
+        let button = event.currentTarget;
+        let dataId = button.attributes.getNamedItem("data-id").value;
+
+        if (dataId === "share-btn"){
+            // Implement sharing feature
+        } else if (dataId === "download-btn"){
+            // Implement Download feature
+        } else if (dataId === "delete-btn"){
+            // Implement Delete Feature
+            $.ajax({
+                url:"/"+filename,
+                type:"DELETE",
+                async:false,
+                cache:false,
+                processData:false,
+                contentType:false,
+                enctype:"multipart/form-data",
+                success:(response)=>{
+                    console.log(response);
+                    if (response.messageCode==1){
+                        do_refresh();
+                    }
+                }
+            });
+        }
+   
+
+    }
     
 });
