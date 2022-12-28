@@ -8,7 +8,9 @@ from enum import Enum
 import os
 from pathlib import Path
 from datetime import datetime
+from uuid import uuid4
 
+BASE_DIR = Path(os.path.abspath(__file__))
 
 app = FastAPI()
 app.mount("/static",StaticFiles(directory='static'),name="static")
@@ -57,7 +59,8 @@ async def get_all_files(request:Request):
             "created_at":creation_date,
             "url":"https://python.org",
             "server_path":os.path.join(FILES_UPLOAD_FOLDER,file),
-            "filesize":filesize
+            "filesize":filesize,
+            "unique_hash":uuid4().hex
         }
         files.append(temp)
 
