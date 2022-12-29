@@ -238,6 +238,7 @@ div.item{
     flex-direction: row;
     justify-content: space-between;
     padding-bottom:5px;
+    gap:10px;
 }
 
 
@@ -291,8 +292,6 @@ div.item{
     margin-top:80px;
     margin-right:5px;
     max-height:400px;
-    border-radius:10px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 
@@ -398,7 +397,19 @@ div.menu-btn{
     transform:scale3d(1.1,1.2,1.2);
 }
 
+a{
+}
 
+a.button-link{
+    color: #ffffff;
+    text-decoration: none;
+
+}
+
+a.button-link:hover{
+    color: #ffffff;
+    text-decoration: none;
+}
 
 /*  If screen width is less then 800px */
 @media only screen and (max-width:800px){
