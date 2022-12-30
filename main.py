@@ -45,6 +45,11 @@ app.mount("/files",StaticFiles(directory= FILES_UPLOAD_FOLDER),name="files")
 views_router = InferringRouter()
 templates = Jinja2Templates(directory="templates")
 
+FILE_TYPES = {
+    "musics":['.mp3','.ogg','.wav'],
+    "videos":['.mp4','.mk4','.mov'],
+    "images":['.jpg','.png','.gif','.jpeg','.webm']
+}
 
 class ErrorCodes(Enum):
     UPLOADED_SUCCESSFULLY = 1
@@ -59,11 +64,11 @@ class MainAppView:
 
 
     @views_router.get("/get-all-files")
-    async def get_all_files(self,request:Request):
+    async def get_all_files(self,request:Request,category:str=None):
         return {
                 'message':'Got all files',
                 'messageCode':1,
-                'files':get_dir_files(FILES_UPLOAD_FOLDER)
+                'files':get_dir_files(FILES_UPLOAD_FOLDER,file_types=FILE_TYPES.get(category))
             }
 
 
