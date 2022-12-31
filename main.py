@@ -13,7 +13,7 @@ from datetime import datetime
 from uuid import uuid4
 import sqlite3
 
-from favourites import favourites_router
+from favourites import favourites_router,Favourite
 from helper_functions import get_dir_files
 
 def create_database(path):
@@ -100,7 +100,13 @@ class MainAppView:
         messageCode = -1
 
         try:
+            # Delete file from server 
             os.remove(f"{FILES_UPLOAD_FOLDER}/{filename}")
+
+            # Delete file if its in favourites
+            print(dir(favourites_router))
+            Favourite.delete_favourite_item(filename=filename)
+
             message = "File deleted"
             messageCode = 1
 

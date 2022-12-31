@@ -82,3 +82,23 @@ class Favourite:
             "message":message,
             "messageCode":messageCode
         }
+
+    @classmethod
+    def delete_favourite_item(cls,filename):
+        message = "Error"
+        messageCode = -1
+
+        with sqlite3.connect("database.db") as connection:
+            cursor = connection.cursor()
+            try:
+                cursor.execute("DELETE FROM favourites WHERE filename=?",(filename,))
+                message = "Favourite Item Deleted"
+                messageCode = 1
+            except sqlite3.IntegrityError:
+                message = "Error deleting item"
+                messageCode = -1
+
+        return {
+            "message":message,
+            "messageCode":messageCode
+        }

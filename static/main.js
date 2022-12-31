@@ -160,11 +160,11 @@ $(document).ready(()=>{
 
                 `
 
-                if (data.files.length === 0){
+                if (data.results.length === 0){
                     items_container.innerHTML += `
                     
                     <h1 class="no-files">
-                        😞 No Files were Found
+                     Your Favourite files appear here
                     </h1>
 
                     `
