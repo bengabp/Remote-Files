@@ -4,7 +4,7 @@ from uuid import uuid4
 from datetime import datetime
 
 
-def get_dir_files(path,is_file=False,file_types=[]):
+def get_dir_files(path,is_file=False,file_types=[],search_query=None):
     if not is_file:
         all_files = os.listdir(f"{path}/")
         files = []
@@ -12,6 +12,12 @@ def get_dir_files(path,is_file=False,file_types=[]):
                 file_object = Path(os.path.join(path,file))
 
                 filename,extension = file_object.name,file_object.suffix
+                
+                if search_query:
+                    search_query = search_query.lower()
+                    if search_query not in filename.lower():
+                        continue
+
                 if file_types:
                     if extension not in file_types:
                         continue

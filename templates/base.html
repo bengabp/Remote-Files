@@ -39,7 +39,7 @@
                 <h1>Remote<span> Files</span></h1> 
             </div>
             <input type="file" name="uploaded-file" id="file-upload" style="display:none"/> 
-
+            
             <div id="loader-container">
                 <div></div>
                 <div></div>
@@ -47,11 +47,21 @@
                 <div></div>
             </div>
 
-            <div id="upload-btn" onclick="$('#file-upload').trigger('click');">
+            <div id="upload-btn" onclick="$('#file-upload').trigger('click');" class="menu-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-cloud-plus-fill" viewBox="0 0 16 16">
                     <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm.5 4v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z"/>
                   </svg>
                 <span>Upload</span>
+            </div>
+        </div>
+
+        <div class="page-header-lower">
+            <input type="text" id="search-field" placeholder="Search..">
+            <div class="menu-btn" id="display-fav-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                </svg>
+                <span>Favourites</span>
             </div>
         </div>
     </header>

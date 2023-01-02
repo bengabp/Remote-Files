@@ -3,6 +3,18 @@ $(document).ready(()=>{
     let logo_icon =  document.getElementById("logo-icon");
     let floating_footer = document.getElementById("page-footer");
     let panel_up = true;
+    let fav_panel_up = false;
+    let current_subPage = "all";
+
+    let searchBar = document.getElementById("search-field");
+    searchBar.addEventListener("input",onSearchBarInput);
+
+    let favPanel = document.getElementById("page-main-side-favourites");
+    let mainPage = document.getElementById("page-main-side-content");
+
+    let displayFavBtn = document.getElementById("display-fav-btn");
+    displayFavBtn.addEventListener("click",onDisplayFavBtnClick);
+    
 
     String.prototype.toProperCase = function () {
         return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -46,29 +58,19 @@ $(document).ready(()=>{
         }
     });
 
-    function do_refresh(){
+    function do_refresh(q=""){
         $.ajax({
-            url:"/get-all-files",
+            url:"/get-all-files"+"?q="+q,
             type:"GET",
             success:(data)=>{
-                
                 let items_container = document.getElementById("page-main-side-content");
                 let current_items = items_container.getElementsByClassName("item");
+                
+                searchBar.placeholder = "Search All Files . . .";
 
                 $("#page-main-side-content").empty();
 
-                items_container.innerHTML += `
                 
-                <div id="page-main-side-content-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16">
-                        <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
-                    </svg>
-                    <h1 style="width:max-content;">All Files</h1>
-                    <input type="text" placeholder="Search Files...">
-                </div>
-
-                `
-
                 if (data.files.length === 0){
                     items_container.innerHTML += `
                     
@@ -77,6 +79,12 @@ $(document).ready(()=>{
                     </h1>
 
                     `
+                } else {
+                    let subPageLabel = document.createElement("h1");
+                    subPageLabel.textContent = "All Files";
+                    subPageLabel.style.margin = "0";
+                    subPageLabel.style.marginLeft = "10px";
+                    items_container.appendChild(subPageLabel);
                 }
 
                 data.files.forEach(new_item =>{
@@ -263,10 +271,7 @@ $(document).ready(()=>{
                     "filename":filename
                 }),
                 success:(response)=>{
-                    console.log(response)
-                    if (response.messageCode==1){
-                        do_refresh();
-                    }
+                    do_refresh();
                 }
             });
             
@@ -281,9 +286,7 @@ $(document).ready(()=>{
                 contentType:false,
                 enctype:"multipart/form-data",
                 success:(response)=>{
-                    if (response.messageCode==1){
-                        do_refresh();
-                    }
+                    do_refresh();
                 }
             });
         }
@@ -294,6 +297,7 @@ $(document).ready(()=>{
         let buttonDataId = clickedButton.attributes.getNamedItem("data-id");
         
         if (buttonDataId.value === "all-files-btn"){
+            current_subPage = "all";
             do_refresh();
         } else {
             do_dynamic_refresh(file_type=buttonDataId.value.split('-')[1]);
@@ -301,6 +305,7 @@ $(document).ready(()=>{
     });
 
     function do_dynamic_refresh(file_type){
+        current_subPage = file_type
         $.ajax({
             url:"/get-all-files?category="+file_type,
             type:"GET",
@@ -310,18 +315,11 @@ $(document).ready(()=>{
                 let current_items = items_container.getElementsByClassName("item");
 
                 $("#page-main-side-content").empty();
-
-                items_container.innerHTML += `
                 
-                <div id="page-main-side-content-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16">
-                        <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
-                    </svg>
-                    <h1 style="width:max-content;">${file_type.toProperCase()}</h1>
-                    <input type="text" placeholder="Search ${file_type.toProperCase()}...">
-                </div>
-
-                `
+                
+                searchBar.placeholder = `Search ${file_type.toProperCase()} . . .`;
+                
+                
                 if (data.files.length === 0){
                     items_container.innerHTML += `
                     
@@ -330,6 +328,12 @@ $(document).ready(()=>{
                     </h1>
 
                     `
+                } else {
+                    let subPageLabel = document.createElement("h1");
+                    subPageLabel.textContent = file_type.toProperCase();
+                    subPageLabel.style.margin = "0";
+                    subPageLabel.style.marginLeft = "10px";
+                    items_container.appendChild(subPageLabel);
                 }
                 
                 data.files.forEach(new_item =>{
@@ -391,4 +395,41 @@ $(document).ready(()=>{
             }
         });
     }
+
+    // Live Search Implementation
+    function onSearchBarInput(event){
+        let searchInput = document.getElementById("search-field");
+        let searchText = searchInput.value.trim();
+        do_refresh(q=searchText);
+    }
+
+    function onDisplayFavBtnClick(event){
+        console.log(favPanel);
+        fav_panel_up = !fav_panel_up
+        if (fav_panel_up){
+            mainPage.style.filter = "blur(10px)";
+            favPanel.style.transform = "translateY(0%)";
+        } else {
+            favPanel.style.transform = "translateY(130%)";
+            mainPage.style.filter = "blur(0px)";
+        }
+    }
+
+    window.onresize = (event)=>{
+        let winWidth = window.innerWidth;
+        if (winWidth > 1000){
+            favPanel.style.transform = "translateY(0%)";
+            mainPage.style.filter = "blur(0px)";
+            fav_panel_up = false;
+        } else {
+            console.log("HEre",fav_panel_up)
+            favPanel.style.transform = "translateY(130%)";
+            if (fav_panel_up === false){
+                mainPage.style.filter = "blur(0px)";
+            } else {
+                mainPage.style.filter = "blur(10px)";
+            }
+        }
+    }
+ 
 });

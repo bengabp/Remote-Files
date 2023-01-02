@@ -64,11 +64,11 @@ class MainAppView:
 
 
     @views_router.get("/get-all-files")
-    async def get_all_files(self,request:Request,category:str=None):
+    async def get_all_files(self,request:Request,category:str=None,q=""):
         return {
                 'message':'Got all files',
                 'messageCode':1,
-                'files':get_dir_files(FILES_UPLOAD_FOLDER,file_types=FILE_TYPES.get(category))
+                'files':get_dir_files(FILES_UPLOAD_FOLDER,file_types=FILE_TYPES.get(category),search_query=q if len(q)>0 else None)
             }
 
 
@@ -78,11 +78,9 @@ class MainAppView:
         file = file.get("file")
 
         try:
-            print("Saving file on server..")
             filename = file.filename
             with open(f"{FILES_UPLOAD_FOLDER}/{filename}","wb") as uploading:
                 uploading.write(file.file.read())
-                print("Saved file..")
                 
             return {
                 'message':f'{filename} was uploaded',
@@ -104,7 +102,6 @@ class MainAppView:
             os.remove(f"{FILES_UPLOAD_FOLDER}/{filename}")
 
             # Delete file if its in favourites
-            print(dir(favourites_router))
             Favourite.delete_favourite_item(filename=filename)
 
             message = "File deleted"
