@@ -33,6 +33,10 @@ def create_database(path):
 
 BASE_DIR = Path(os.path.abspath(__file__))
 FILES_UPLOAD_FOLDER = "server_files"
+
+if not os.path.exists(FILES_UPLOAD_FOLDER):
+    os.mkdir(FILES_UPLOAD_FOLDER)
+    
 DB_PATH = 'database.db'
 
 
